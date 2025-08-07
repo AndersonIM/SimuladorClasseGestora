@@ -1,23 +1,24 @@
-# app.py (Versão Final com Upload Manual)
-
 import streamlit as st
 import pandas as pd
 import io
+import altair as alt # A biblioteca para gráficos
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Simulador de Premiação", page_icon="🧮", layout="wide")
-##************************************************************************************************
+
+
+# --- Barra Lateral para Ações e Logo ---
 # Bloco de código para exibir a logo no topo e à direita
 html_logo_code = """
 <style>
     .logo-container {
         display: flex;
-        justify-content: center; 
+        justify-content: flex-end;
         align-items: center;
         margin-top: -40px;
     }
     .logo-img {
-        width: 350px; /* Ajuste o tamanho como desejar */
+        width: 270px;
         height: auto;
     }
 </style>
@@ -27,11 +28,17 @@ html_logo_code = """
 """
 # Comando para renderizar o código HTML na página
 st.sidebar.markdown(html_logo_code, unsafe_allow_html=True)
-##************************************************************************************************
+st.sidebar.markdown("<br>", unsafe_allow_html=True) 
 
+st.sidebar.header("2. Execute a Simulação")
+nome_do_arquivo = st.sidebar.text_input("Nome do arquivo .xlsx no projeto", "AFATR104_Classe_Gestora.xlsx")
+botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="primary")
+
+
+# --- Interface Principal ---
 st.markdown("<h1 style='font-size: 32px;'>🧮 Simulador de Incentivo Classe Gestora</h1>", unsafe_allow_html=True)
-st.markdown("<h1 style='font-size: 16px;'> Insira os valores e Ano/Mês e gere o relatório. </h1>", unsafe_allow_html=True)
-# st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
+st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
+
 
 # --- Funções de Lógica ---
 def parse_mes_ano(mes_ano_str):
@@ -41,9 +48,9 @@ def parse_mes_ano(mes_ano_str):
     except:
         return None
 
-# --- Interface Principal ---
-st.markdown("<h1 style='font-size: 26px;'> 1. Defina as Metas das Campanhas </h1>", unsafe_allow_html=True)
+st.header("1. Defina as Metas das Campanhas")
 
+# ... (Seus expanders com as metas das campanhas continuam aqui, sem alterações) ...
 with st.expander("🎛️ CAMPANHA 1 (Jan / Fev / Mar)"):
     col1, col2 = st.columns(2); c1_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "01/2025", key="c1p1m"); c1_p1_valor = col2.number_input("Valor Meta (P1)", value=230, min_value=0, key="c1p1v"); c1_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "02/2025", key="c1p2m"); c1_p2_valor = col2.number_input("Valor Meta (P2)", value=250, min_value=0, key="c1p2v"); c1_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "02/2025", key="c1p2em"); c1_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=400, min_value=0, key="c1p2ev"); c1_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "03/2025", key="c1p3m"); c1_p3_valor = col2.number_input("Valor Meta (P3)", value=280, min_value=0, key="c1p3v"); c1_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "03/2025", key="c1p3em"); c1_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=480, min_value=0, key="c1p3ev")
 with st.expander("🎛️ CAMPANHA 2 (Abr / Mai / Jun)"):
@@ -53,17 +60,12 @@ with st.expander("🎛️ CAMPANHA 3 (Jul / Ago / Set)"):
 with st.expander("🎛️ CAMPANHA 4 (Out / Nov / Dez)"):
     col1, col2 = st.columns(2); c4_p1_mes_ano = col1.text_input("Mês/Ano (P1) C4", "10/2025", key="c4p1m"); c4_p1_valor = col2.number_input("Valor Meta (P1) C4", value=0, min_value=0, key="c4p1v"); c4_p2_mes_ano = col1.text_input("Mês/Ano (P2) C4", "11/2025", key="c4p2m"); c4_p2_valor = col2.number_input("Valor Meta (P2) C4", value=0, min_value=0, key="c4p2v"); c4_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C4", "11/2025", key="c4p2em"); c4_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C4", value=0, min_value=0, key="c4p2ev"); c4_p3_mes_ano = col1.text_input("Mês/Ano (P3) C4", "12/2025", key="c4p3m"); c4_p3_valor = col2.number_input("Valor Meta (P3) C4", value=0, min_value=0, key="c4p3v"); c4_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C4", "12/2025", key="c4p3em"); c4_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C4", value=0, min_value=0, key="c4p3ev")
 
-# --- Barra Lateral para Ações ---
-st.sidebar.markdown("<br><br>", unsafe_allow_html=True)
-st.sidebar.header("2. Execute a Simulação")
-# st.sidebar.info("Para usar, primeiro arraste seu arquivo .xlsx para a lista de arquivos à esquerda.")
-nome_do_arquivo = st.sidebar.text_input("Nome do arquivo .xlsx no projeto", "AFATR104_Classe_Gestora.xlsx")
-botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="primary")
 
 # --- Lógica Principal de Cálculo ---
 if botao_calcular:
     if nome_do_arquivo:
         with st.spinner("Aguarde, os cálculos estão em andamento..."):
+            # ... (toda a sua lógica de cálculo existente permanece aqui) ...
             regras_brutas = [
                 {'mes_ano': c1_p1_mes_ano, 'valor': c1_p1_valor, 'premio': 'Prêmio 1'}, {'mes_ano': c1_p2_mes_ano, 'valor': c1_p2_valor, 'premio': 'Prêmio 2'}, {'mes_ano': c1_p2e_mes_ano, 'valor': c1_p2e_valor, 'premio': 'Prêmio 2 + Extra'}, {'mes_ano': c1_p3_mes_ano, 'valor': c1_p3_valor, 'premio': 'Prêmio 3'}, {'mes_ano': c1_p3e_mes_ano, 'valor': c1_p3e_valor, 'premio': 'Prêmio 3 + Extra'},
                 {'mes_ano': c2_p1_mes_ano, 'valor': c2_p1_valor, 'premio': 'Prêmio 1'}, {'mes_ano': c2_p2_mes_ano, 'valor': c2_p2_valor, 'premio': 'Prêmio 2'}, {'mes_ano': c2_p2e_mes_ano, 'valor': c2_p2e_valor, 'premio': 'Prêmio 2 + Extra'}, {'mes_ano': c2_p3_mes_ano, 'valor': c2_p3_valor, 'premio': 'Prêmio 3'}, {'mes_ano': c2_p3e_mes_ano, 'valor': c2_p3e_valor, 'premio': 'Prêmio 3 + Extra'},
@@ -79,49 +81,112 @@ if botao_calcular:
             
             st.info(f"⚙️ {len(regras_premiacao)} regras ativas foram configuradas.")
 
-            # O BLOCO TRY/EXCEPT FOI REMOVIDO PARA DEBUGAR
-            # O CÓDIGO AGORA VAI QUEBRAR E MOSTRAR O ERRO REAL
+            try:
+                df = pd.read_excel(nome_do_arquivo)
+                
+                df['AnoMes'] = (df['AnoMes'] % 10000) * 100 + (df['AnoMes'] // 10000)
+                if df['PRC_CATALOGO'].dtype == 'object':
+                    df['PRC_CATALOGO'] = df['PRC_CATALOGO'].astype(str).str.replace(',', '.').astype(float)
+                else:
+                    df['PRC_CATALOGO'] = df['PRC_CATALOGO'].astype(float)
+                
+                st.info("📊 Base de vendas carregada. Agrupando dados...")
+                
+                df_agrupado = df.groupby(['CLIENTE', 'AnoMes', 'REGIAO']).agg(PRC_CATALOGO_TOTAL=('PRC_CATALOGO', 'sum')).reset_index()
+                
+                def definir_premio_dinamico(row, regras):
+                    anomes_cliente = row['AnoMes']
+                    valor_cliente = row['PRC_CATALOGO_TOTAL']
+                    regras_do_mes = [r for r in regras if r['anomes'] == anomes_cliente]
+                    if not regras_do_mes: return 'Sem Prêmio'
+                    regras_do_mes_ordenadas = sorted(regras_do_mes, key=lambda x: x['valor'], reverse=True)
+                    for regra in regras_do_mes_ordenadas:
+                        if valor_cliente >= regra['valor']: return regra['premio']
+                    return 'Sem Prêmio'
+                
+                st.info("🧠 Aplicando regras e calculando as premiações...")
+                
+                df_agrupado['Resultado'] = df_agrupado.apply(lambda row: definir_premio_dinamico(row, regras_premiacao), axis=1)
+                df_premiados = df_agrupado[df_agrupado['Resultado'] != 'Sem Prêmio'].copy()
+                df_premiados.rename(columns={'CLIENTE': 'cliente', 'PRC_CATALOGO_TOTAL': 'PRC CATALOGO', 'REGIAO': 'REGIÃO', 'AnoMes': 'ANO/MÊS'}, inplace=True)
+                df_final = df_premiados[['cliente', 'PRC CATALOGO', 'REGIÃO', 'ANO/MÊS', 'Resultado']]
+                df_final['PRC CATALOGO'] = df_final['PRC CATALOGO'].apply(lambda x: f'{x:,.2f}'.replace(",", "TEMP").replace(".", ",").replace("TEMP", "."))
+                
+                st.success("✅ Cálculos finalizados com sucesso!")
+                st.header("3. Resultados")
+                st.dataframe(df_final)
+                
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df_final.to_excel(writer, index=False, sheet_name='Premiados')
+                
+                st.sidebar.download_button(label="📥 Baixar Relatório de Premiados (.xlsx)", data=output.getvalue(), file_name='resultado_premiacao_dinamico.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-            # AQUI É A MUDANÇA: Lê o arquivo pelo nome
-            df = pd.read_excel(nome_do_arquivo)
-            
-            df['AnoMes'] = (df['AnoMes'] % 10000) * 100 + (df['AnoMes'] // 10000)
-            if df['PRC_CATALOGO'].dtype == 'object':
-                df['PRC_CATALOGO'] = df['PRC_CATALOGO'].astype(str).str.replace(',', '.').astype(float)
-            else:
-                df['PRC_CATALOGO'] = df['PRC_CATALOGO'].astype(float)
-            
-            st.info("📊 Base de vendas carregada. Agrupando dados...")
-            
-            df_agrupado = df.groupby(['CLIENTE', 'AnoMes', 'REGIAO']).agg(PRC_CATALOGO_TOTAL=('PRC_CATALOGO', 'sum')).reset_index()
-            
-            def definir_premio_dinamico(row, regras):
-                anomes_cliente = row['AnoMes']
-                valor_cliente = row['PRC_CATALOGO_TOTAL']
-                regras_do_mes = [r for r in regras if r['anomes'] == anomes_cliente]
-                if not regras_do_mes: return 'Sem Prêmio'
-                regras_do_mes_ordenadas = sorted(regras_do_mes, key=lambda x: x['valor'], reverse=True)
-                for regra in regras_do_mes_ordenadas:
-                    if valor_cliente >= regra['valor']: return regra['premio']
-                return 'Sem Prêmio'
-            
-            st.info("🧠 Aplicando regras e calculando as premiações...")
-            
-            df_agrupado['Resultado'] = df_agrupado.apply(lambda row: definir_premio_dinamico(row, regras_premiacao), axis=1)
-            df_premiados = df_agrupado[df_agrupado['Resultado'] != 'Sem Prêmio'].copy()
-            df_premiados.rename(columns={'CLIENTE': 'cliente', 'PRC_CATALOGO_TOTAL': 'PRC CATALOGO', 'REGIAO': 'REGIÃO', 'AnoMes': 'ANO/MÊS'}, inplace=True)
-            df_final = df_premiados[['cliente', 'PRC CATALOGO', 'REGIÃO', 'ANO/MÊS', 'Resultado']]
-            df_final['PRC CATALOGO'] = df_final['PRC CATALOGO'].apply(lambda x: f'{x:,.2f}'.replace(",", "TEMP").replace(".", ",").replace("TEMP", "."))
-            
-            st.success("✅ Cálculos finalizados com sucesso!")
-            st.header("3. Resultados")
-            st.dataframe(df_final)
-            
-            output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                df_final.to_excel(writer, index=False, sheet_name='Premiados')
-            
-            st.sidebar.download_button(label="📥 Baixar Relatório de Premiados (.xlsx)", data=output.getvalue(), file_name='resultado_premiacao_dinamico.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                # --- NOVA SEÇÃO DE GRÁFICOS (SIMPLIFICADA) ---
+                if not df_final.empty:
+                    st.header("4. Análise Gráfica")
+                    # 1. Preparar os dados para o gráfico
+                    df_grafico = df_final.copy()
+                    contagem_ganhadores = df_grafico.groupby(['ANO/MÊS', 'Resultado']).size().reset_index(name='Quantidade')
+                    
+                    # Ordena os resultados para uma visualização mais lógica no gráfico
+                    ordem_premios = [
+                        'Prêmio 1', 'Prêmio 2', 'Prêmio 2 + Extra', 
+                        'Prêmio 3', 'Prêmio 3 + Extra'
+                    ]
+                    contagem_ganhadores['Resultado'] = pd.Categorical(contagem_ganhadores['Resultado'], categories=ordem_premios, ordered=True)
+
+
+                    # 2. Criar o gráfico de barras com Altair
+                    bars = alt.Chart(contagem_ganhadores).mark_bar(
+                        cornerRadiusTopLeft=3,
+                        cornerRadiusTopRight=3
+                    ).encode(
+                        x=alt.X('Resultado:N', title=None, sort=ordem_premios, axis=alt.Axis(labels=True, ticks=False, domain=False)),
+                        y=alt.Y('Quantidade:Q', title='Nº de Ganhadores', axis=alt.Axis(grid=True)),
+                        tooltip=['ANO/MÊS', 'Resultado', 'Quantidade']
+                    )
+
+                    # 3. Criar os rótulos de texto para cima das barras
+                    text = bars.mark_text(
+                        align='center',
+                        baseline='bottom',
+                        dy=-5,  # Desloca o texto um pouco para cima
+                        color='red',
+                        fontWeight='bold',
+                        fontSize=15
+                    ).encode(
+                        text=alt.Text('Quantidade:Q')
+                    ).transform_calculate(
+                        # Cria um novo campo 'label' formatando o número e trocando a vírgula por ponto
+                        label = "replace(format(datum.Quantidade, ',.0f'), ',', '.')"
+                    ).encode(
+                        text='label:N' # Usa o novo campo 'label' como texto
+                    )
+
+                    # 4. Combinar barras e texto e criar as colunas por período
+                    chart = (bars + text).facet(
+                        column=alt.Column(
+                            'ANO/MÊS:O', 
+                            title=None, 
+                            header=alt.Header(labelOrient='bottom', titleOrient='bottom', labelPadding=10)
+                        )
+                    ).properties(
+                        title='Quantidade de Ganhadores por Período e Prêmio'
+                    ).configure_view(
+                        stroke=None # Remove a borda ao redor de cada subgráfico
+                    ).configure_title(
+                        fontSize=18,
+                        anchor='middle'
+                    )
+                    
+                    # 5. Exibir o gráfico no Streamlit
+                    st.altair_chart(chart, use_container_width=True)
+
+            except FileNotFoundError:
+                st.error(f"❌ Erro: Arquivo '{nome_do_arquivo}' não encontrado. Verifique o nome e se ele está no local correto.")
+            except Exception as e:
+                st.error(f"Ocorreu um erro inesperado: {e}")
 
     else:
         st.warning("⚠️ Por favor, digite o nome do arquivo da base de vendas antes de gerar o relatório.")
