@@ -1,0 +1,3 @@
+{
+  "postAttachCommand": "sudo cp .devcontainer/nginx.conf /etc/nginx/conf.d/upload-size.conf && sudo service nginx reload"
+}
