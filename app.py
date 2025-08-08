@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import io
 import altair as alt # A biblioteca para gráficos
+from datetime import datetime
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Simulador de Premiação", page_icon="🧮", layout="wide")
-
 
 # --- Barra Lateral para Ações e Logo ---
 # Bloco de código para exibir a logo no topo e à direita
@@ -34,27 +34,37 @@ st.sidebar.header("2. Execute a Simulação")
 nome_do_arquivo = st.sidebar.text_input("Nome do arquivo .xlsx no projeto", "AFATR104_Classe_Gestora.xlsx")
 botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="primary")
 
-
 # --- Interface Principal ---
 st.markdown("<h1 style='font-size: 32px;'>🧮 Simulador de Incentivo Classe Gestora</h1>", unsafe_allow_html=True)
 st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
 
-
-# --- Funções de Lógica ---
+# <<< FUNÇÃO CORRIGIDA >>>
 def parse_mes_ano(mes_ano_str):
     try:
         mes, ano = mes_ano_str.split('/')
-        return int(f"{ano}{mes}")
+        # A única mudança é converter para float em vez de int
+        return int(f"{ano}{mes}") 
     except:
         return None
 
 st.header("1. Defina as Metas das Campanhas")
 
-# ... (Seus expanders com as metas das campanhas continuam aqui, sem alterações) ...
+# --- Trecho a ser ADICIONADO ---
+col_valor_adicional1, col_valor_adicional2 = st.columns([1, 3]) # Cria colunas para alinhar
+with col_valor_adicional1:
+    valor_adicional_por_cliente = st.number_input(
+        "Valor Adicional por Cliente (Opcional)",
+        min_value=0,
+        value=0,
+        step=10,
+        help="Se preenchido, este valor será SOMADO ao faturamento de CADA cliente antes de aplicar as regras de premiação."
+    )
+# ---------------------------------
+
 with st.expander("🎛️ CAMPANHA 1 (Jan / Fev / Mar)"):
     col1, col2 = st.columns(2); c1_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "01/2025", key="c1p1m"); c1_p1_valor = col2.number_input("Valor Meta (P1)", value=230, min_value=0, key="c1p1v"); c1_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "02/2025", key="c1p2m"); c1_p2_valor = col2.number_input("Valor Meta (P2)", value=250, min_value=0, key="c1p2v"); c1_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "02/2025", key="c1p2em"); c1_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=400, min_value=0, key="c1p2ev"); c1_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "03/2025", key="c1p3m"); c1_p3_valor = col2.number_input("Valor Meta (P3)", value=280, min_value=0, key="c1p3v"); c1_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "03/2025", key="c1p3em"); c1_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=480, min_value=0, key="c1p3ev")
 with st.expander("🎛️ CAMPANHA 2 (Abr / Mai / Jun)"):
-    col1, col2 = st.columns(2); c2_p1_mes_ano = col1.text_input("Mês/Ano (P1) C2", "04/2025", key="c2p1m"); c2_p1_valor = col2.number_input("Valor Meta (P1) C2", value=230, min_value=0, key="c2p1v"); c2_p2_mes_ano = col1.text_input("Mês/Ano (P2) C2", "05/2025", key="c2p2m"); c2_p2_valor = col2.number_input("Valor Meta (P2) C2", value=250, min_value=0, key="c2p2v"); c2_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C2", "05/2025", key="c2p2em"); c2_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C2", value=550, min_value=0, key="c2p2ev"); c2_p3_mes_ano = col1.text_input("Mês/Ano (P3) C2", "06/2025", key="c2p3m"); c2_p3_valor = col2.number_input("Valor Meta (P3) C2", value=300, min_value=0, key="c2p3v"); c2_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C2", "06/2025", key="c2p3em"); c2_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C2", value=700, min_value=0, key="c2p3ev")
+    col1, col2 = st.columns(2); c2_p1_mes_ano = col1.text_input("Mês/Ano (P1) C2", "04/2025", key="c2p1m"); c2_p1_valor = col2.number_input("Valor Meta (P1) C2", value=0, min_value=0, key="c2p1v"); c2_p2_mes_ano = col1.text_input("Mês/Ano (P2) C2", "05/2025", key="c2p2m"); c2_p2_valor = col2.number_input("Valor Meta (P2) C2", value=0, min_value=0, key="c2p2v"); c2_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C2", "05/2025", key="c2p2em"); c2_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C2", value=0, min_value=0, key="c2p2ev"); c2_p3_mes_ano = col1.text_input("Mês/Ano (P3) C2", "06/2025", key="c2p3m"); c2_p3_valor = col2.number_input("Valor Meta (P3) C2", value=0, min_value=0, key="c2p3v"); c2_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C2", "06/2025", key="c2p3em"); c2_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C2", value=0, min_value=0, key="c2p3ev")
 with st.expander("🎛️ CAMPANHA 3 (Jul / Ago / Set)"):
     col1, col2 = st.columns(2); c3_p1_mes_ano = col1.text_input("Mês/Ano (P1) C3", "07/2025", key="c3p1m"); c3_p1_valor = col2.number_input("Valor Meta (P1) C3", value=0, min_value=0, key="c3p1v"); c3_p2_mes_ano = col1.text_input("Mês/Ano (P2) C3", "08/2025", key="c3p2m"); c3_p2_valor = col2.number_input("Valor Meta (P2) C3", value=0, min_value=0, key="c3p2v"); c3_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C3", "08/2025", key="c3p2em"); c3_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C3", value=0, min_value=0, key="c3p2ev"); c3_p3_mes_ano = col1.text_input("Mês/Ano (P3) C3", "09/2025", key="c3p3m"); c3_p3_valor = col2.number_input("Valor Meta (P3) C3", value=0, min_value=0, key="c3p3v"); c3_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C3", "09/2025", key="c3p3em"); c3_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C3", value=0, min_value=0, key="c3p3ev")
 with st.expander("🎛️ CAMPANHA 4 (Out / Nov / Dez)"):
@@ -65,7 +75,6 @@ with st.expander("🎛️ CAMPANHA 4 (Out / Nov / Dez)"):
 if botao_calcular:
     if nome_do_arquivo:
         with st.spinner("Aguarde, os cálculos estão em andamento..."):
-            # ... (toda a sua lógica de cálculo existente permanece aqui) ...
             regras_brutas = [
                 {'mes_ano': c1_p1_mes_ano, 'valor': c1_p1_valor, 'premio': 'Prêmio 1'}, {'mes_ano': c1_p2_mes_ano, 'valor': c1_p2_valor, 'premio': 'Prêmio 2'}, {'mes_ano': c1_p2e_mes_ano, 'valor': c1_p2e_valor, 'premio': 'Prêmio 2 + Extra'}, {'mes_ano': c1_p3_mes_ano, 'valor': c1_p3_valor, 'premio': 'Prêmio 3'}, {'mes_ano': c1_p3e_mes_ano, 'valor': c1_p3e_valor, 'premio': 'Prêmio 3 + Extra'},
                 {'mes_ano': c2_p1_mes_ano, 'valor': c2_p1_valor, 'premio': 'Prêmio 1'}, {'mes_ano': c2_p2_mes_ano, 'valor': c2_p2_valor, 'premio': 'Prêmio 2'}, {'mes_ano': c2_p2e_mes_ano, 'valor': c2_p2e_valor, 'premio': 'Prêmio 2 + Extra'}, {'mes_ano': c2_p3_mes_ano, 'valor': c2_p3_valor, 'premio': 'Prêmio 3'}, {'mes_ano': c2_p3e_mes_ano, 'valor': c2_p3e_valor, 'premio': 'Prêmio 3 + Extra'},
@@ -82,8 +91,7 @@ if botao_calcular:
             st.info(f"⚙️ {len(regras_premiacao)} regras ativas foram configuradas.")
 
             try:
-                df = pd.read_excel(nome_do_arquivo)
-                
+                df = pd.read_excel(nome_do_arquivo)     
                 df['AnoMes'] = (df['AnoMes'] % 10000) * 100 + (df['AnoMes'] // 10000)
                 if df['PRC_CATALOGO'].dtype == 'object':
                     df['PRC_CATALOGO'] = df['PRC_CATALOGO'].astype(str).str.replace(',', '.').astype(float)
@@ -93,7 +101,14 @@ if botao_calcular:
                 st.info("📊 Base de vendas carregada. Agrupando dados...")
                 
                 df_agrupado = df.groupby(['CLIENTE', 'AnoMes', 'REGIAO']).agg(PRC_CATALOGO_TOTAL=('PRC_CATALOGO', 'sum')).reset_index()
-                
+                # --- Trecho a ser ADICIONADO ---
+                # >>> INÍCIO DA NOVA LÓGICA: SOMA O VALOR ADICIONAL SE EXISTIR <<<
+                if valor_adicional_por_cliente > 0:
+                    st.info(f"Aplicando valor adicional de R$ {valor_adicional_por_cliente:,.2f} por cliente.")
+                    df_agrupado['PRC_CATALOGO_TOTAL'] = df_agrupado['PRC_CATALOGO_TOTAL'] + valor_adicional_por_cliente
+                # >>> FIM DA NOVA LÓGICA <<<
+                # ---------------------------------
+                # Bloco Novo para DEBUG
                 def definir_premio_dinamico(row, regras):
                     anomes_cliente = row['AnoMes']
                     valor_cliente = row['PRC_CATALOGO_TOTAL']
@@ -115,6 +130,43 @@ if botao_calcular:
                 st.success("✅ Cálculos finalizados com sucesso!")
                 st.header("3. Resultados")
                 st.dataframe(df_final)
+                # <<< INÍCIO DO BLOCO DE DIAGNÓSTICO FINAL >>>
+                if df_final.empty and not df_agrupado.empty:
+                    st.error("Nenhum resultado foi gerado. Iniciando diagnóstico final...", icon="🚨")
+                    
+                    # 1. Analisar as datas (Ano/Mês)
+                    with st.expander("Análise de Datas (Ano/Mês)", expanded=True):
+                        st.write("A seguir, os valores de Ano/Mês presentes nos seus DADOS e nas suas REGRAS. Eles precisam ser **idênticos** (incluindo o tipo de dado) para que a lógica funcione.")
+                        
+                        # Datas dos dados
+                        datas_nos_dados = df_agrupado['AnoMes'].dropna().unique()
+                        st.write("**Datas encontradas na sua planilha (após agrupar):**")
+                        st.write(f"Tipo de dado na coluna 'AnoMes': `{df_agrupado['AnoMes'].dtype}`")
+                        st.write(datas_nos_dados)
+                        
+                        st.divider() # Divisor visual
+                        
+                        # Datas das regras
+                        datas_nas_regras = sorted(list(set([r['anomes'] for r in regras_premiacao])))
+                        st.write("**Datas configuradas nas regras da campanha (com valor > 0):**")
+                        if datas_nas_regras:
+                            st.write(f"Tipo de dado do primeiro item da regra: `{type(datas_nas_regras[0])}`")
+                            st.write(datas_nas_regras)
+                        else:
+                            st.write("Nenhuma regra de premiação com valor > 0 foi ativada na interface.")
+
+                    # 2. Analisar os valores
+                    with st.expander("Análise de Valores", expanded=True):
+                        st.write("A seguir, uma amostra dos valores totais dos clientes e as metas das regras. O 'PRC_CATALOGO_TOTAL' precisa ser maior ou igual ao 'valor' da meta para o mês correspondente.")
+                        
+                        st.write("**Amostra dos dados de vendas dos clientes (já com valor adicional, se houver):**")
+                        st.dataframe(df_agrupado[['CLIENTE', 'AnoMes', 'PRC_CATALOGO_TOTAL']].head(10))
+                        
+                        st.divider() # Divisor visual
+
+                        st.write("**Metas de valor das regras ativas:**")
+                        st.json(regras_premiacao)
+                # <<< FIM DO BLOCO DE DIAGNÓSTICO FINAL >>>
                 
                 output = io.BytesIO()
                 with pd.ExcelWriter(output, engine='openpyxl') as writer:
