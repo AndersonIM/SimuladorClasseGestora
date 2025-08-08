@@ -37,7 +37,7 @@ botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="prim
 
 st.sidebar.divider() # Cria uma linha separadora
 
-st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
+st.sidebar.markdown("<br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
 
 st.sidebar.markdown(
     """
