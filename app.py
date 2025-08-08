@@ -35,10 +35,8 @@ st.sidebar.header("2. Execute a Simulação")
 nome_do_arquivo = st.sidebar.text_input("Nome do arquivo .xlsx no projeto", "AFATR104_Classe_Gestora.xlsx")
 botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="primary")
 
-st.sidebar.divider() # Cria uma linha separadora
-
 st.sidebar.markdown("<br><br><br><br><br><br><br><br><br>", unsafe_allow_html=True)
-
+st.sidebar.divider() # Cria uma linha separadora
 st.sidebar.markdown(
     """
     <div style="font-size: 0.8rem; color: #808080;">
