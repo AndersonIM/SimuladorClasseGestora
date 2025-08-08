@@ -20,6 +20,7 @@ html_logo_code = """
     .logo-img {
         width: 270px;
         height: auto;
+        filter: grayscale(1) brightness(0); /* Linha adicionada */
     }
 </style>
 <div class="logo-container">
