@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Simulador de Premiação", page_icon="🧮", layout="wide")
 
 # --- Barra Lateral para Ações e Logo ---
-# Bloco de código para exibir a logo no topo e à direita
+# Bloco de código para exibir a logo no topo e à esquerda
 html_logo_code = """
 <style>
     .logo-container {
@@ -35,6 +35,22 @@ st.sidebar.header("2. Execute a Simulação")
 nome_do_arquivo = st.sidebar.text_input("Nome do arquivo .xlsx no projeto", "AFATR104_Classe_Gestora.xlsx")
 botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="primary")
 
+st.sidebar.divider() # Cria uma linha separadora
+
+st.sidebar.markdown("<br><br><br>", unsafe_allow_html=True)
+
+st.sidebar.markdown(
+    """
+    <div style="font-size: 0.8rem; color: #808080;">
+        <p style="margin: 0;"><strong>Desenvolvedor:</strong></p>
+        <p style="margin: 0;">Anderson Marques</p>
+        <p style="margin: 0;">MARQUES IM MARKETING LTDA</p>
+        <p style="margin: 0;">55.237.365/0001-26</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- Interface Principal ---
 st.markdown("<h1 style='font-size: 32px;'>🧮 Simulador de Incentivo Classe Gestora</h1>", unsafe_allow_html=True)
 st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
@@ -42,7 +58,6 @@ st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
 def parse_mes_ano(mes_ano_str):
     try:
         mes, ano = mes_ano_str.split('/')
-        # A única mudança é converter para float em vez de int
         return int(f"{ano}{mes}") 
     except:
         return None
@@ -206,7 +221,6 @@ if botao_calcular:
                 if valor_adicional_por_cliente > 0:
                     st.info(f"Aplicando valor adicional de R$ {valor_adicional_por_cliente:,.2f} por cliente.")
                     df_agrupado['PRC_CATALOGO_TOTAL'] = df_agrupado['PRC_CATALOGO_TOTAL'] + valor_adicional_por_cliente
-                # >>> FIM DA NOVA LÓGICA <<<
                 # ---------------------------------
                 # Bloco Novo para DEBUG
                 def definir_premio_dinamico(row, regras):
