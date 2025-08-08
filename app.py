@@ -38,7 +38,6 @@ botao_calcular = st.sidebar.button("Gerar Relatório de Premiação", type="prim
 st.markdown("<h1 style='font-size: 32px;'>🧮 Simulador de Incentivo Classe Gestora</h1>", unsafe_allow_html=True)
 st.markdown("Insira os valores e Ano/Mês e gere o relatório.")
 
-# <<< FUNÇÃO CORRIGIDA >>>
 def parse_mes_ano(mes_ano_str):
     try:
         mes, ano = mes_ano_str.split('/')
@@ -47,7 +46,19 @@ def parse_mes_ano(mes_ano_str):
     except:
         return None
 
+def validar_data_futura(container, data_str, lista_erros):
+    """Valida a data, exibe um aviso e a adiciona numa lista de erros se for futura."""
+    periodo_input = parse_mes_ano(data_str)
+    if periodo_input:
+        hoje = datetime.now()
+        periodo_atual = hoje.year * 100 + hoje.month
+        if periodo_input >= periodo_atual:
+            container.warning(f"Atenção: A data '{data_str}' não pode ser futura, digite corretamente.", icon="⚠️")
+            if data_str not in lista_erros:
+                lista_erros.append(data_str)
+
 st.header("1. Defina as Metas das Campanhas")
+datas_futuras_encontradas = []
 
 # --- Trecho a ser ADICIONADO ---
 col_valor_adicional1, col_valor_adicional2 = st.columns([1, 3]) # Cria colunas para alinhar
@@ -61,19 +72,108 @@ with col_valor_adicional1:
     )
 # ---------------------------------
 
+# Bloco Novo com Validação
 with st.expander("🎛️ CAMPANHA 1 (Jan / Fev / Mar)"):
-    col1, col2 = st.columns(2); c1_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "01/2025", key="c1p1m"); c1_p1_valor = col2.number_input("Valor Meta (P1)", value=230, min_value=0, key="c1p1v"); c1_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "02/2025", key="c1p2m"); c1_p2_valor = col2.number_input("Valor Meta (P2)", value=250, min_value=0, key="c1p2v"); c1_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "02/2025", key="c1p2em"); c1_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=400, min_value=0, key="c1p2ev"); c1_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "03/2025", key="c1p3m"); c1_p3_valor = col2.number_input("Valor Meta (P3)", value=280, min_value=0, key="c1p3v"); c1_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "03/2025", key="c1p3em"); c1_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=480, min_value=0, key="c1p3ev")
+    col1, col2 = st.columns(2)
+    # Período 1
+    c1_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "01/2024", key="c1p1m")
+    validar_data_futura(col1, c1_p1_mes_ano, datas_futuras_encontradas)
+    c1_p1_valor = col2.number_input("Valor Meta (P1)", value=0, min_value=0, key="c1p1v")
+    # Período 2
+    c1_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "02/2024", key="c1p2m")
+    validar_data_futura(col1, c1_p2_mes_ano, datas_futuras_encontradas)
+    c1_p2_valor = col2.number_input("Valor Meta (P2)", value=0, min_value=0, key="c1p2v")
+    # Período 2 Extra
+    c1_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "02/2024", key="c1p2em")
+    validar_data_futura(col1, c1_p2e_mes_ano, datas_futuras_encontradas)
+    c1_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=0, min_value=0, key="c1p2ev")
+    # Período 3
+    c1_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "03/2024", key="c1p3m")
+    validar_data_futura(col1, c1_p3_mes_ano, datas_futuras_encontradas)
+    c1_p3_valor = col2.number_input("Valor Meta (P3)", value=0, min_value=0, key="c1p3v")
+    # Período 3 Extra
+    c1_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "03/2024", key="c1p3em")
+    validar_data_futura(col1, c1_p3e_mes_ano, datas_futuras_encontradas)
+    c1_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=0, min_value=0, key="c1p3ev")
+
+# Bloco Novo com Validação
 with st.expander("🎛️ CAMPANHA 2 (Abr / Mai / Jun)"):
-    col1, col2 = st.columns(2); c2_p1_mes_ano = col1.text_input("Mês/Ano (P1) C2", "04/2025", key="c2p1m"); c2_p1_valor = col2.number_input("Valor Meta (P1) C2", value=0, min_value=0, key="c2p1v"); c2_p2_mes_ano = col1.text_input("Mês/Ano (P2) C2", "05/2025", key="c2p2m"); c2_p2_valor = col2.number_input("Valor Meta (P2) C2", value=0, min_value=0, key="c2p2v"); c2_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C2", "05/2025", key="c2p2em"); c2_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C2", value=0, min_value=0, key="c2p2ev"); c2_p3_mes_ano = col1.text_input("Mês/Ano (P3) C2", "06/2025", key="c2p3m"); c2_p3_valor = col2.number_input("Valor Meta (P3) C2", value=0, min_value=0, key="c2p3v"); c2_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C2", "06/2025", key="c2p3em"); c2_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C2", value=0, min_value=0, key="c2p3ev")
+    col1, col2 = st.columns(2)
+    # Período 1
+    c2_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "04/2024", key="c2p1m")
+    validar_data_futura(col1, c2_p1_mes_ano, datas_futuras_encontradas)
+    c2_p1_valor = col2.number_input("Valor Meta (P1)", value=0, min_value=0, key="c2p1v")
+    # Período 2
+    c2_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "05/2024", key="c2p2m")
+    validar_data_futura(col1, c2_p2_mes_ano, datas_futuras_encontradas)
+    c2_p2_valor = col2.number_input("Valor Meta (P2)", value=0, min_value=0, key="c2p2v")
+    # Período 2 Extra
+    c2_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "05/2024", key="c2p2em")
+    validar_data_futura(col1, c2_p2e_mes_ano, datas_futuras_encontradas)
+    c2_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=0, min_value=0, key="c2p2ev")
+    # Período 3
+    c2_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "06/2024", key="c2p3m")
+    validar_data_futura(col1, c2_p3_mes_ano, datas_futuras_encontradas)
+    c2_p3_valor = col2.number_input("Valor Meta (P3)", value=0, min_value=0, key="c2p3v")
+    # Período 3 Extra
+    c2_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "06/2024", key="c2p3em")
+    validar_data_futura(col1, c2_p3e_mes_ano, datas_futuras_encontradas)
+    c2_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=0, min_value=0, key="c2p3ev")
+
+# Bloco Novo com Validação
 with st.expander("🎛️ CAMPANHA 3 (Jul / Ago / Set)"):
-    col1, col2 = st.columns(2); c3_p1_mes_ano = col1.text_input("Mês/Ano (P1) C3", "07/2025", key="c3p1m"); c3_p1_valor = col2.number_input("Valor Meta (P1) C3", value=0, min_value=0, key="c3p1v"); c3_p2_mes_ano = col1.text_input("Mês/Ano (P2) C3", "08/2025", key="c3p2m"); c3_p2_valor = col2.number_input("Valor Meta (P2) C3", value=0, min_value=0, key="c3p2v"); c3_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C3", "08/2025", key="c3p2em"); c3_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C3", value=0, min_value=0, key="c3p2ev"); c3_p3_mes_ano = col1.text_input("Mês/Ano (P3) C3", "09/2025", key="c3p3m"); c3_p3_valor = col2.number_input("Valor Meta (P3) C3", value=0, min_value=0, key="c3p3v"); c3_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C3", "09/2025", key="c3p3em"); c3_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C3", value=0, min_value=0, key="c3p3ev")
+    col1, col2 = st.columns(2)
+    # Período 1
+    c3_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "07/2024", key="c3p1m")
+    validar_data_futura(col1, c3_p1_mes_ano, datas_futuras_encontradas)
+    c3_p1_valor = col2.number_input("Valor Meta (P1)", value=0, min_value=0, key="c3p1v")
+    # Período 2
+    c3_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "08/2024", key="c3p2m")
+    validar_data_futura(col1, c3_p2_mes_ano, datas_futuras_encontradas)
+    c3_p2_valor = col2.number_input("Valor Meta (P2)", value=0, min_value=0, key="c3p2v")
+    # Período 2 Extra
+    c3_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "08/2024", key="c3p2em")
+    validar_data_futura(col1, c3_p2e_mes_ano, datas_futuras_encontradas)
+    c3_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=0, min_value=0, key="c3p2ev")
+    # Período 3
+    c3_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "09/2024", key="c3p3m")
+    validar_data_futura(col1, c3_p3_mes_ano, datas_futuras_encontradas)
+    c3_p3_valor = col2.number_input("Valor Meta (P3)", value=0, min_value=0, key="c3p3v")
+    # Período 3 Extra
+    c3_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "09/2024", key="c3p3em")
+    validar_data_futura(col1, c3_p3e_mes_ano, datas_futuras_encontradas)
+    c3_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=0, min_value=0, key="c3p3ev")
+
+    # Bloco Novo com Validação
 with st.expander("🎛️ CAMPANHA 4 (Out / Nov / Dez)"):
-    col1, col2 = st.columns(2); c4_p1_mes_ano = col1.text_input("Mês/Ano (P1) C4", "10/2025", key="c4p1m"); c4_p1_valor = col2.number_input("Valor Meta (P1) C4", value=0, min_value=0, key="c4p1v"); c4_p2_mes_ano = col1.text_input("Mês/Ano (P2) C4", "11/2025", key="c4p2m"); c4_p2_valor = col2.number_input("Valor Meta (P2) C4", value=0, min_value=0, key="c4p2v"); c4_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra) C4", "11/2025", key="c4p2em"); c4_p2e_valor = col2.number_input("Valor Meta (P2 Extra) C4", value=0, min_value=0, key="c4p2ev"); c4_p3_mes_ano = col1.text_input("Mês/Ano (P3) C4", "12/2025", key="c4p3m"); c4_p3_valor = col2.number_input("Valor Meta (P3) C4", value=0, min_value=0, key="c4p3v"); c4_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra) C4", "12/2025", key="c4p3em"); c4_p3e_valor = col2.number_input("Valor Meta (P3 Extra) C4", value=0, min_value=0, key="c4p3ev")
+    col1, col2 = st.columns(2)
+    # Período 1
+    c4_p1_mes_ano = col1.text_input("Mês/Ano (P1)", "10/2024", key="c4p1m")
+    validar_data_futura(col1, c4_p1_mes_ano, datas_futuras_encontradas)
+    c4_p1_valor = col2.number_input("Valor Meta (P1)", value=0, min_value=0, key="c4p1v")
+    # Período 2
+    c4_p2_mes_ano = col1.text_input("Mês/Ano (P2)", "11/2024", key="c4p2m")
+    validar_data_futura(col1, c4_p2_mes_ano, datas_futuras_encontradas)
+    c4_p2_valor = col2.number_input("Valor Meta (P2)", value=0, min_value=0, key="c4p2v")
+    # Período 2 Extra
+    c4_p2e_mes_ano = col1.text_input("Mês/Ano (P2 Extra)", "11/2024", key="c4p2em")
+    validar_data_futura(col1, c4_p2e_mes_ano, datas_futuras_encontradas)
+    c4_p2e_valor = col2.number_input("Valor Meta (P2 Extra)", value=0, min_value=0, key="c4p2ev")
+    # Período 3
+    c4_p3_mes_ano = col1.text_input("Mês/Ano (P3)", "12/2024", key="c4p3m")
+    validar_data_futura(col1, c4_p3_mes_ano, datas_futuras_encontradas)
+    c4_p3_valor = col2.number_input("Valor Meta (P3)", value=0, min_value=0, key="c4p3v")
+    # Período 3 Extra
+    c4_p3e_mes_ano = col1.text_input("Mês/Ano (P3 Extra)", "12/2024", key="c4p3em")
+    validar_data_futura(col1, c4_p3e_mes_ano, datas_futuras_encontradas)
+    c4_p3e_valor = col2.number_input("Valor Meta (P3 Extra)", value=0, min_value=0, key="c4p3ev")
 
 
 # --- Lógica Principal de Cálculo ---
 if botao_calcular:
-    if nome_do_arquivo:
+    if datas_futuras_encontradas:
+        st.error(f"Cálculo bloqueado. Corrija as seguintes datas futuras: {', '.join(datas_futuras_encontradas)}", icon="🚨")
+    elif nome_do_arquivo:
         with st.spinner("Aguarde, os cálculos estão em andamento..."):
             regras_brutas = [
                 {'mes_ano': c1_p1_mes_ano, 'valor': c1_p1_valor, 'premio': 'Prêmio 1'}, {'mes_ano': c1_p2_mes_ano, 'valor': c1_p2_valor, 'premio': 'Prêmio 2'}, {'mes_ano': c1_p2e_mes_ano, 'valor': c1_p2e_valor, 'premio': 'Prêmio 2 + Extra'}, {'mes_ano': c1_p3_mes_ano, 'valor': c1_p3_valor, 'premio': 'Prêmio 3'}, {'mes_ano': c1_p3e_mes_ano, 'valor': c1_p3e_valor, 'premio': 'Prêmio 3 + Extra'},
@@ -101,8 +201,7 @@ if botao_calcular:
                 st.info("📊 Base de vendas carregada. Agrupando dados...")
                 
                 df_agrupado = df.groupby(['CLIENTE', 'AnoMes', 'REGIAO']).agg(PRC_CATALOGO_TOTAL=('PRC_CATALOGO', 'sum')).reset_index()
-                # --- Trecho a ser ADICIONADO ---
-                # >>> INÍCIO DA NOVA LÓGICA: SOMA O VALOR ADICIONAL SE EXISTIR <<<
+                # >>> SOMA O VALOR ADICIONAL SE EXISTIR <<<
                 if valor_adicional_por_cliente > 0:
                     st.info(f"Aplicando valor adicional de R$ {valor_adicional_por_cliente:,.2f} por cliente.")
                     df_agrupado['PRC_CATALOGO_TOTAL'] = df_agrupado['PRC_CATALOGO_TOTAL'] + valor_adicional_por_cliente
